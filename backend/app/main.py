@@ -6,10 +6,14 @@ from contextlib import asynccontextmanager
 
 from app.config import settings
 from app.routes import auth, chat, conversations
+from database.connection import Base, engine
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    # Create database tables if they don't exist
+    Base.metadata.create_all(bind=engine)
+    print("Database tables initialized")
     print(f"Starting PersonalGPT API ({settings.ENVIRONMENT})")
     yield
     # Shutdown
